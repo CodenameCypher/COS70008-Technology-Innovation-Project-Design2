@@ -1,0 +1,100 @@
+<!-- employee_information/templates/employee_information/register.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full height of the viewport */
+            margin: 0; /* Remove default margin */
+            background-color: #001f3f; /* Dark blue background */
+            font-family: Arial, sans-serif; /* Set a font for better readability */
+            color: white; /* White text color */
+        }
+
+        .container {
+            background-color: #004080; /* Darker blue background for the form */
+            padding: 20px; /* Space inside the container */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
+            width: 400px; /* Wider form */
+        }
+
+        h2 {
+            text-align: center; /* Center the heading */
+            color: white; /* White text for the heading */
+        }
+
+        label {
+            display: block; /* Each label on a new line */
+            margin: 10px 0 5px; /* Margin for spacing */
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%; /* Full width of the input */
+            padding: 10px; /* Padding inside the input */
+            margin-bottom: 15px; /* Space below the input */
+            border: 1px solid #ccc; /* Light gray border */
+            border-radius: 4px; /* Rounded corners for inputs */
+            font-size: 16px; /* Large text in input boxes */
+        }
+
+        button {
+            background-color: #007bff; /* Blue background */
+            color: white; /* White text */
+            border: none; /* No border */
+            padding: 10px; /* Padding inside the button */
+            border-radius: 4px; /* Rounded corners for button */
+            cursor: pointer; /* Change cursor on hover */
+            width: 100%; /* Full width for button */
+            font-size: 16px; /* Large text for button */
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        .message {
+            color: red; /* Color for error messages */
+            text-align: center; /* Center align error messages */
+        }
+
+        p {
+            text-align: center; /* Center align paragraphs */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Register</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <label for="username">Username:</label>
+            <input type="text" name="username" required><br>
+            <label for="email">Email:</label>
+            <input type="email" name="email" required><br>
+            <label for="password">Password:</label>
+            <input type="password" name="password" required><br>
+            <button type="submit">Register</button>
+        </form>
+
+        {% if messages %} 
+            {% for message in messages %}
+            <p class="message">{{ message }}</p>
+            {% endfor %} 
+        {% endif %}
+
+        <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+    </div>
+</body>
+
+</html>

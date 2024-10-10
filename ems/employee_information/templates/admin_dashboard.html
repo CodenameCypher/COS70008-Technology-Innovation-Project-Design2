@@ -1,0 +1,134 @@
+{% extends "employee_information/base.html" %}
+{% load humanize %}
+{% block pageContent %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f8f8f8;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .chart-box {
+            flex: 1 1 300px;
+            margin: 10px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        .user-list {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <a href="{% url 'manage_users' %}">Manage Users</a> |
+    <a href="{% url 'logout' %}">Logout</a>
+
+    <div class="container">
+        <div class="chart-box">
+            <h2>User Log Time Distribution</h2>
+            <canvas id="logTimeChart"></canvas>
+        </div>
+    </div>
+
+    <div class="user-list">
+        <h2>User List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Last Login</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.last_login|date:"Y-m-d H:i:s" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No users found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // User Log Time Distribution Bar Chart
+        const ctxLogTime = document.getElementById('logTimeChart').getContext('2d');
+        const logTimeLabels = {{ log_time_labels|safe }};  // Labels for log times (e.g., time intervals)
+        const logTimeValues = {{ log_time_values|safe }};  // Corresponding values for each time interval
+
+        const logTimeChart = new Chart(ctxLogTime, {
+            type: 'bar',
+            data: {
+                labels: logTimeLabels,
+                datasets: [{
+                    label: 'User Log Times',
+                    data: logTimeValues,
+                    backgroundColor: '#007bff',  // Blue
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'User Log Time Distribution'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+{% endblock pageContent %}

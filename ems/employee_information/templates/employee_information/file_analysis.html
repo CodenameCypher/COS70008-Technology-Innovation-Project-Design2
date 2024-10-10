@@ -1,0 +1,179 @@
+{% extends "employee_information/base.html" %} {% load humanize %} {% block pageContent %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+ 
+    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12"></div>
+    
+       
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f8f8f8;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping of items */
+            justify-content: center; /* Center the items */
+            margin: 20px 0;
+        }
+        .chart-box {
+            flex: 1 1 300px; /* Grow and shrink, minimum width of 300px */
+            margin: 10px; /* Add spacing between boxes */
+            background-color: #ffffff; /* White background for boxes */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+            padding: 20px; /* Inner padding */
+            box-sizing: border-box; /* Include padding in the width */
+        }
+        canvas {
+            max-width: 100%; /* Full width */
+            height: auto; /* Maintain aspect ratio */
+        }
+        .ransomware-count {
+            text-align: center;
+            font-size: 1.5em;
+            margin: 20px 0;
+            color: #d9534f; /* Red color for alert */
+        }
+        .summary {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2em;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    
+  
+    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+        <div class="mdc-card">
+            <div class="d-flex justify-content-between">
+                <h4 class="card-title mb-0">Analysis Page</h4>
+            </div>
+        </div>
+    </div>
+    
+
+
+
+    <h2> Malem</h2>
+    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    
+
+        <div class="chart-box">
+            <h2>Severity Distribution</h2>
+            <canvas id="severityChart"></canvas>
+        </div>
+
+        <div class="chart-box">
+            <h2>Class Distribution</h2>
+            <canvas id="classChart"></canvas>
+        </div>
+
+        <div class="chart-box">
+            <h2>Total Detected vs Not Detected Issues</h2>
+            <canvas id="detectionChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Severity Distribution Pie Chart
+        const ctxSeverity = document.getElementById('severityChart').getContext('2d');
+        const severityLabels = {{ severity_labels|safe }};
+        const severityValues = {{ severity_values|safe }};
+
+        const severityChart = new Chart(ctxSeverity, {
+            type: 'pie',
+            data: {
+                labels: severityLabels,
+                datasets: [{
+                    data: severityValues,
+                    backgroundColor: ['#007bff', '#6c757d', '#ffffff'],  // Blue, Gray, White
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Severity Distribution'
+                    }
+                }
+            }
+        });
+
+        // Class Distribution Pie Chart
+        const ctxClass = document.getElementById('classChart').getContext('2d');
+        const classLabels = {{ class_labels|safe }};
+        const classValues = {{ class_values|safe }};
+
+        const classChart = new Chart(ctxClass, {
+            type: 'pie',
+            data: {
+                labels: classLabels,
+                datasets: [{
+                    data: classValues,
+                    backgroundColor: ['#007bff', '#6c757d', '#ffffff'],  // Blue, Gray, White
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Class Distribution'
+                    }
+                }
+            }
+        });
+
+        // Total Detected vs Not Detected Issues Doughnut Chart
+        const detectedIssuesCount = {{ total_detected_issues }};  // Detected issues
+        const notDetectedIssuesCount = {{ total_issues }} - detectedIssuesCount;  // Not detected issues
+        const ctxDetection = document.getElementById('detectionChart').getContext('2d');
+
+        const detectionChart = new Chart(ctxDetection, {
+            type: 'doughnut',
+            data: {
+                labels: ['Detected Issues', 'Not Detected Issues'],
+                datasets: [{
+                    data: [detectedIssuesCount, notDetectedIssuesCount],
+                    backgroundColor: ['#007bff', '#6c757d'],  // Blue for detected, Gray for not detected
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Total Detected vs Not Detected Issues'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+{% endblock pageContent %}
